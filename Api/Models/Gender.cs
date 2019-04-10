@@ -1,6 +1,6 @@
-namespace DataProduct.Models
+namespace Api.Models
 {
-    public enum Gender
+    public enum Genre
     {
         Comedy,
         Drama,

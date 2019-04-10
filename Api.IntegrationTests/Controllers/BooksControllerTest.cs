@@ -5,7 +5,7 @@ using Microsoft.AspNetCore.Mvc.Testing;
 using Newtonsoft.Json.Linq;
 using Xunit;
 
-namespace DataProduct.Tests.Controllers
+namespace Api.IntegrationTests.Controllers
 {
     public class ValuesControllerTest : IClassFixture<WebApplicationFactory<Startup>>
     {
