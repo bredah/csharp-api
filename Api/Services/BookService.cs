@@ -32,7 +32,7 @@ namespace Api.Services
         /// </summary>
         /// <param name="book"></param>
         /// <returns></returns>
-        public Book Create(Book book)
+        public Book Add(Book book)
         {
             var session = GetSession();
             throw new NotImplementedException();
@@ -61,7 +61,7 @@ namespace Api.Services
         /// Remove a book
         /// </summary>
         /// <param name="id"></param>
-        public void Remove(Guid id)
+        public bool Remove(Guid id)
         {
             throw new NotImplementedException();
         }
@@ -71,7 +71,7 @@ namespace Api.Services
         /// </summary>
         /// <param name="id"></param>
         /// <param name="book"></param>
-        public void Update(Guid id, Book book)
+        public Book Update(Guid id, Book book)
         {
             throw new NotImplementedException();
         }

@@ -8,8 +8,8 @@ namespace Api.Services
     {
         List<Book> Get();
         Book Get(Guid id);
-        Book Create(Book book);
-        void Update(Guid id, Book book);
-        void Remove(Guid id);
+        Book Add(Book book);
+        Book Update(Guid id, Book book);
+        bool Remove(Guid id);
     }
 }

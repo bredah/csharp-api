@@ -1,20 +1,19 @@
 using Api.Models;
 using Api.Services;
-using Api.Models;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System;
-using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace Api.Controllers
 {
     [Produces("application/json")]
     [Route("api/[controller]")]
-    public class BooksController : ControllerBase
+    public class BookController : Controller
     {
         private IBookService _service;
 
-        public BooksController(IBookService service)
+        public BookController(IBookService service)
         {
             _service = service;
         }
@@ -37,39 +36,23 @@ namespace Api.Controllers
         /// <response code="200">Returns the list</response>
         /// <response code="400">If not exist a book</response>            
         [HttpGet]
-        [ProducesResponseType(200)]
-        [ProducesResponseType(400)]
-        public ActionResult<List<Book>> GetAll()
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public async Task <IActionResult> GetAll()
         {
-            return new List<Book>()
-            {
-                new Book()
-                {
-                    Id = new Guid("585a7950-0632-4fb5-b350-4dc3aed524cd"),
-                    Title = "First book",
-                    Genre = Genre.Drama,
-                    Author = "The first man"
-                },
-                new Book()
-                {
-                    Id = new Guid("0478c3c7-8d59-454b-a978-e6f45d2ed8ca"),
-                    Title = "Second book",
-                    Genre = Genre.Comedy,
-                    Author = "The first man"
-                }
-            };
+            var result = _service.Get();
+            return Ok(result);
         }
 
         [HttpGet("{id}")]
-        public async Task<ActionResult<Book>> GetById(int id)
+        public async Task<IActionResult> GetById(Guid id)
         {
-            return new Book()
+            var item = _service.Get(id);
+            if (item == null)
             {
-                Id = new Guid("585a7950-0632-4fb5-b350-4dc3aed524cd"),
-                Title = "First book",
-                Genre = Genre.Drama,
-                Author = "The first man"
-            };
+                return NotFound();
+            }
+            return Ok(item);
         }
 
         /// <summary>
@@ -78,9 +61,14 @@ namespace Api.Controllers
         /// <param name="value"></param>
         /// <returns></returns>
         [HttpPost]
-        public async Task<IActionResult> Add([FromBody] string value)
+        public async Task<IActionResult> Post([FromBody] Book value)
         {
-            return NoContent();
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+            var item = _service.Add(value);
+            return CreatedAtAction("Get", new { id = item.Id }, item);
         }
 
         /// <summary>
@@ -90,9 +78,19 @@ namespace Api.Controllers
         /// <param name="value">Book content value</param>
         /// <returns></returns>
         [HttpPut("{id}")]
-        public async Task<IActionResult> Update(int id, [FromBody] string value)
+        public async Task<IActionResult> Put(Guid id, [FromBody] Book value)
         {
-            return NoContent();
+            var item = _service.Get(id);
+            if (item == null)
+            {
+                return NotFound();
+            }
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+            item = _service.Update(id, value);
+            return  AcceptedAtAction("Get", new { id = item.Id }, item);
         }
 
         /// <summary>
@@ -101,9 +99,15 @@ namespace Api.Controllers
         /// <param name="id"></param>
         /// <returns></returns>
         [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteById(int id)
+        public async Task<IActionResult> DeleteById(Guid id)
         {
-            return NoContent();
+            var item = _service.Get(id);
+            if (item == null)
+            {
+                return NotFound();
+            }
+            _service.Remove(id);
+            return Ok();
         }
     }
 }
