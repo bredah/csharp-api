@@ -11,7 +11,7 @@ namespace Api.Controllers
     [Route("api/[controller]")]
     public class BookController : Controller
     {
-        private IBookService _service;
+        private readonly IBookService _service;
 
         public BookController(IBookService service)
         {
@@ -34,18 +34,16 @@ namespace Api.Controllers
         /// </remarks>
         /// <returns>A list with all existing books</returns>
         /// <response code="200">Returns the list</response>
-        /// <response code="400">If not exist a book</response>            
         [HttpGet]
         [ProducesResponseType(StatusCodes.Status200OK)]
-        [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public async Task <IActionResult> GetAll()
+        public IActionResult GetAll()
         {
             var result = _service.Get();
             return Ok(result);
         }
 
         [HttpGet("{id}")]
-        public async Task<IActionResult> GetById(Guid id)
+        public IActionResult GetById(Guid id)
         {
             var item = _service.Get(id);
             if (item == null)
@@ -61,7 +59,7 @@ namespace Api.Controllers
         /// <param name="value"></param>
         /// <returns></returns>
         [HttpPost]
-        public async Task<IActionResult> Post([FromBody] Book value)
+        public IActionResult Post([FromBody] Book value)
         {
             if (!ModelState.IsValid)
             {
@@ -78,7 +76,7 @@ namespace Api.Controllers
         /// <param name="value">Book content value</param>
         /// <returns></returns>
         [HttpPut("{id}")]
-        public async Task<IActionResult> Put(Guid id, [FromBody] Book value)
+        public IActionResult Put(Guid id, [FromBody] Book value)
         {
             var item = _service.Get(id);
             if (item == null)
@@ -90,7 +88,7 @@ namespace Api.Controllers
                 return BadRequest(ModelState);
             }
             item = _service.Update(id, value);
-            return  AcceptedAtAction("Get", new { id = item.Id }, item);
+            return AcceptedAtAction("Get", new { id = item.Id }, item);
         }
 
         /// <summary>
@@ -99,7 +97,7 @@ namespace Api.Controllers
         /// <param name="id"></param>
         /// <returns></returns>
         [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteById(Guid id)
+        public IActionResult DeleteById(Guid id)
         {
             var item = _service.Get(id);
             if (item == null)
