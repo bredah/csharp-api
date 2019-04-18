@@ -1,19 +1,25 @@
+using Newtonsoft.Json;
 using System;
 using System.ComponentModel.DataAnnotations;
-using Newtonsoft.Json;
 
 namespace Api.Models
 {
     public class Book
     {
-        [Required]
         [JsonProperty("id")]
+        [Required]
         public Guid Id { get; set; }
+
         [JsonProperty("title")]
+        [Required, StringLength(20, MinimumLength = 10, ErrorMessage = "Invalid value")]
         public string Title { get; set; }
-        [JsonProperty("genre")]
-        public Genre Genre { get; set; }
+
+        [Required, StringLength(30, MinimumLength = 10, ErrorMessage = "Invalid value")]
         [JsonProperty("author")]
         public string Author { get; set; }
+
+        [JsonProperty("genre")]
+        [Required]
+        public Genre Genre { get; set; }
     }
 }

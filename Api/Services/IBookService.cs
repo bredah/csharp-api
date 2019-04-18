@@ -6,7 +6,7 @@ namespace Api.Services
 {
     public interface IBookService
     {
-        List<Book> Get();
+        IEnumerable<Book> Get();
         Book Get(Guid id);
         Book Add(Book book);
         Book Update(Guid id, Book book);

@@ -24,7 +24,7 @@ namespace Api.Controllers
         /// </summary>
         /// <remarks>
         /// Sample request:
-        ///    GET /Books
+        ///    GET /books
         ///    [{
         ///        "id": 1,
         ///        "title": "First book",
@@ -35,20 +35,39 @@ namespace Api.Controllers
         /// <returns>A list with all existing books</returns>
         /// <response code="200">Returns the list</response>
         [HttpGet]
-        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(Book), StatusCodes.Status200OK)]
         public IActionResult GetAll()
         {
             var result = _service.Get();
             return Ok(result);
         }
 
+        /// <summary>
+        /// Retrive a specific book
+        /// </summary>
+        /// <remarks>
+        /// Sample request:
+        ///    GET /books?id=ID
+        ///    {
+        ///        "id": 1,
+        ///        "title": "First book",
+        ///        "genre":  "Drama",
+        ///        "author": "The first man"
+        ///    } 
+        /// </remarks>
+        /// <param name="id">Book id</param>
+        /// <returns>Return a book if exists</returns>
+        /// <response code="200">The book info</response>
+        /// <response code="404">The book does not exist</response>
         [HttpGet("{id}")]
+        [ProducesResponseType(typeof(Book), StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
         public IActionResult GetById(Guid id)
         {
             var item = _service.Get(id);
             if (item == null)
             {
-                return NotFound();
+                return NotFound($"This book does not exist");
             }
             return Ok(item);
         }
@@ -59,9 +78,10 @@ namespace Api.Controllers
         /// <param name="value"></param>
         /// <returns></returns>
         [HttpPost]
+        [ProducesResponseType(typeof(Book), StatusCodes.Status201Created)]
         public IActionResult Post([FromBody] Book value)
         {
-            if (!ModelState.IsValid)
+            if (!ModelState.IsValid || value.Id == Guid.Empty)
             {
                 return BadRequest(ModelState);
             }

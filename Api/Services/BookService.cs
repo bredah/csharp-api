@@ -12,9 +12,9 @@ namespace Api.Services
 
         public BookService(IConfiguration config)
         {
-            _keyspace = "";
+            _keyspace = config["ConnectionStrings:keyspace"];
             _cluster = Cassandra.Cluster.Builder()
-                .AddContactPoint("")
+                .AddContactPoint(config["ConnectionStrings:host"])
                 .Build();
         }
 
@@ -22,7 +22,7 @@ namespace Api.Services
         /// Retrive a session from database
         /// </summary>
         /// <returns>Database session</returns>
-        private Cassandra.ISession GetSession()
+        public Cassandra.ISession GetSession()
         {
             return _cluster.Connect(_keyspace);
         }
@@ -42,7 +42,7 @@ namespace Api.Services
         /// Retrive a book list
         /// </summary>
         /// <returns></returns>
-        public List<Book> Get()
+        public IEnumerable<Book> Get()
         {
             throw new NotImplementedException();
         }
